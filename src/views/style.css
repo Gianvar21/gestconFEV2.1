@@ -1,0 +1,26 @@
+  
+  .image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Otros estilos para el contenedor de la imagen, si es necesario */
+  }
+  
+  .prueba {
+    margin-top: 15px;
+    text-align : left;
+    margin-left: 370px;
+  }
+  
+  .even-row {
+    background-color: #fff; /* Fondo blanco para filas pares */
+  }
+  
+  .odd-row {
+    background-color: #f2f2f2; /* Fondo gris claro para filas impares */
+  }
+
+  .large-text-cell {
+    font-size: 40px; /* Ajusta el tamaño del texto según sea necesario */
+  }
+
