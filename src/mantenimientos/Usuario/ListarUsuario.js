@@ -46,7 +46,7 @@ const ListarUsuario = (props) => {
   const listar = async () => {
     let _body = { Accion: "BUSCARTODOS" };
     try {
-      const res = await eventoService.obtenerUsuariov2(_body);
+      const res = await eventoService.obtenerUsuario(_body);
 
       if (res && res[0]) {
         setData(res[0]);
@@ -163,7 +163,7 @@ const ListarUsuario = (props) => {
           Sgm_cAccesodeSubida
         };
 
-        const res = await eventoService.obtenerUsuariov2(_body);
+        const res = await eventoService.obtenerUsuario(_body);
 
         if (res.error) {
           throw res.error;
@@ -209,7 +209,7 @@ const ListarUsuario = (props) => {
         Sgm_cAccesodeSubida: newValue
       };
   
-      const res = await eventoService.obtenerUsuariov2(_body);
+      const res = await eventoService.obtenerUsuario(_body);
   
       if (res.error) {
         throw res.error;

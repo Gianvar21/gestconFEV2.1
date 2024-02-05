@@ -447,37 +447,46 @@ const LoadFiles = (props) => {
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         }}
       >
-        {isLoged && (
-          <Button
-            variant="contained"
-            onClick={() => {
-              _accesoSubida = storage.GetStorage("Sgm_cAccesodeSubida");
-              _validarUsuario = storage.GetStorage("Sgm_cUsuario");
+ {isLoged && (
+      <Button
+        variant="contained"
+        onClick={async () => {
+          try {
+            // Utilizar el token del estado local
+            const response = await fetch('/ruta/del/servidor/para/verificar/acceso', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                // Incluir el token JWT en las cabeceras para autenticación en el backend
+                'Authorization': 'Bearer ' + token,
+              },
+              body: JSON.stringify({
+                Sgm_cUsuario: storage.GetStorage("Sgm_cUsuario"),
+              }),
+            });
 
-              const accesoSubidaEncriptado = localStorage.getItem("Sgm_cAccesodeSubida");
-              const usuarioEncriptado = localStorage.getItem("Sgm_cUsuario");
+            if (response.ok) {
+              // Acceso válido, abrir el modal
+              openModal();
+            } else {
+              // Acceso no válido, mostrar advertencia
+              Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Debes tener acceso para subir.',
+              });
+            }
+          } catch (error) {
+            // Manejar errores de la solicitud
+            console.error('Error en la solicitud al servidor:', error);
+          }
+        }}
+        style={{ marginLeft: 'auto', backgroundColor: 'darkred', marginBottom: '10px' }}
+      >
+        Subir Archivo
+      </Button>
+    )}
 
-              // Ahora, accesoSubidaEncriptado y usuarioEncriptado contienen los valores encriptados
-              console.log('Acceso de Subida encriptado: ', accesoSubidaEncriptado);
-              console.log('Usuario encriptado: ', usuarioEncriptado);
-
-              
-              console.log('_accesoSubida : ', _accesoSubida);
-              if (!_accesoSubida || _accesoSubida !== 'A') {
-                Swal.fire({
-                  icon: 'warning',
-                  title: 'Advertencia',
-                  text: 'Debes tener acceso para subir.'
-                });
-              } else {
-                openModal();
-              }
-            }}
-            style={{ marginLeft: 'auto', backgroundColor: 'darkred', marginBottom: '10px' }}
-          >
-            Subir Archivo
-          </Button>
-        )}
         {isModalOpen && (
           <div style={{
             position: 'fixed',

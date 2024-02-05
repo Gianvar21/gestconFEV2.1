@@ -153,7 +153,7 @@ const EditaUsuario = (props) => {
             Sgm_cAccesodeSubida: Sgm_cAccesodeSubida
         };
 
-        await eventoService.obtenerUsuariov2(_body).then(
+        await eventoService.obtenerUsuario(_body).then(
             (res) => {
                 setData(res[0]);
                 Swal.fire({

@@ -25,12 +25,12 @@ async function obtenerSgm_cUsuario() {
 obtenerSgm_cUsuario();
 
 function IniciaVariablesGlobales() {
-  console.log("Antes de eliminar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
+  // console.log("Antes de eliminar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
   
-  // No eliminamos físicamente, sino que "ocultamos" el campo
-  storage.hideAccesoSubida();
+  // // No eliminamos físicamente, sino que "ocultamos" el campo
+  // storage.hideAccesoSubida();
 
-  console.log("Después de ocultar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
+  // console.log("Después de ocultar:", sessionStorage.getItem("Sgm_cAccesodeSubida"));
   
   return true;
 }
@@ -38,8 +38,12 @@ function IniciaVariablesGlobales() {
 function SetStorage(pVariable, pValue) {
   if (pValue !== undefined) {
     try {
+      // Encriptar usando AES y luego codificar en base64
       const encryptedValue = CryptoJS.AES.encrypt(pValue, secretKey).toString();
-      sessionStorage.setItem(pVariable, encryptedValue);
+      const base64Value = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encryptedValue));
+
+      // Almacenar en sessionStorage
+      sessionStorage.setItem(pVariable, base64Value);
       return true;
     } catch (error) {
       console.error('Error durante el cifrado:', error);
@@ -54,9 +58,12 @@ function SetStorage(pVariable, pValue) {
 function SetStorageObj(pVariable, pValue) {
   const obj = JSON.stringify(pValue);
   try {
+    // Encriptar usando AES y luego codificar en base64
     const encryptedValue = CryptoJS.AES.encrypt(obj, secretKey).toString();
+    const base64Value = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encryptedValue));
 
-    sessionStorage.setItem(pVariable, encryptedValue);
+    // Almacenar en sessionStorage
+    sessionStorage.setItem(pVariable, base64Value);
     return true;
   } catch (error) {
     console.error('Error durante el cifrado:', error);
@@ -65,26 +72,28 @@ function SetStorageObj(pVariable, pValue) {
 }
 
 function DelStorage(pVariable) {
+  // Eliminar el elemento de sessionStorage
   sessionStorage.removeItem(pVariable);
   return true;
 }
 
 function GetStorage(pVariable) {
-  const encryptedValue = sessionStorage.getItem(pVariable) || "";
+  // Obtener el valor de sessionStorage
+  const base64Value = sessionStorage.getItem(pVariable) || "";
 
-  if (encryptedValue === "") {
+  if (base64Value === "") {
     return "";
   }
 
   try {
-    const decryptedValue = CryptoJS.AES.decrypt(encryptedValue, secretKey).toString(CryptoJS.enc.Utf8);
+    // Decodificar en base64 y luego descifrar usando AES
+    const decryptedValue = CryptoJS.AES.decrypt(CryptoJS.enc.Base64.parse(base64Value).toString(CryptoJS.enc.Utf8), secretKey).toString(CryptoJS.enc.Utf8);
     return decryptedValue || "";
   } catch (error) {
     console.error('Error durante el descifrado:', error);
     return "";
   }
 }
-
 function GetStorageN(pVariable) {
   const encryptedValue = sessionStorage.getItem(pVariable) || "";
 

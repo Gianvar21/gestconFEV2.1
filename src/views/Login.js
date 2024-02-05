@@ -70,38 +70,38 @@ const Login = () => {
 	const BuscarToken = async () => {
 		try {
 			let _body = { Sgm_cUsuario: username, Sgm_cContrasena: md5(password) };
-
-			// obtenemos el token
+	
+			// obtenemos el token y accUp
 			const tokenResponse = await eventoService.obtenerToken(_body);
-
-			// Utiliza la variable local en lugar del estado Token
-			if (tokenResponse) {
+	
+			// Utiliza la variable local en lugar del estado Token y guarda también accUp
+			if (tokenResponse && tokenResponse.token && tokenResponse.accUp) {
 				storage.SetStorage("token", tokenResponse.token);
-				//cookies.set('token', tokenResponse.token, { path: "/" });
+				storage.SetStorage("accUp", tokenResponse.accUp);
 				setError('');
 			}
 		} catch (error) {
 			setError('An error occurred while trying to login - token');
 		}
 	};
-
-
-
+	
 	const handleLogin = async () => {
 		try {
-			// Genera un token
+			// Genera un token y accUp
 			await BuscarToken();
 			const token = storage.GetStorage("token");
+			const accUp = storage.GetStorage("accUp");
+	
 			// Valida si encontró el token
-			if (!token) {
-				throw "Error: Token no existe";
+			if (!token || !accUp) {
+				throw "Error: Token o accUp no existen";
 			}
-
-			let _body = { Accion: "VALIDARUSUARIO", Sgm_cUsuario: username, Sgm_cContrasena: md5(password) };
+	
+			let _body = { Accion: "VALIDARUSUARIO", Sgm_cUsuario: username, Sgm_cContrasena: md5(password), Sgm_cAccesodeSubida: accUp };
 			let _result;
-
+	
 			// Si encontró el token ingresa al login
-			await eventoService.obtenerUsuariov2(_body).then(
+			await eventoService.obtenerUsuario(_body).then(
 				(res) => {
 					setLogeo(res[0]);
 					_result = res[0];
@@ -111,7 +111,6 @@ const Login = () => {
 					throw "Error al obtener el usuario";
 				}
 			);
-
 			if (_result[0].Sgm_cUsuario === username) {
 				// cookies.set('Sgm_cUsuario', _result[0].Sgm_cUsuario, { path: "/" });
 				// cookies.set('Sgm_cNombre', _result[0].Sgm_cNombre, { path: "/" });
